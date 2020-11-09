@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>de.servicezombie.samples</groupId>
+    <artifactId>rest-client</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <description>This is a client without any dependencies to check 
+  if transfer can be used in here because of the JAX-RS Annotations.
+  </description>
+
+  <artifactId>client-plain</artifactId>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>de.servicezombie.samples</groupId>
+      <artifactId>transfer</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>de.servicezombie.samples</groupId>
+      <artifactId>transfer-openapi</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+</project>
