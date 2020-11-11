@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.servicezombie.samples.xkcd_transfer.XkcdComInfoEndpoint;
+import de.servicezombie.samples.xkcd_transfer.XkcdComInfoEndpointDefiniton;
 import de.servicezombie.samples.xkcd_transfer.XkcdComicInfo;
 
 public class RestClientFascadeTest {
@@ -101,8 +102,8 @@ public class RestClientFascadeTest {
 		XkcdComicInfo value;
 
 		final WebTarget webTarget = testee.createWebTarget(
-				XkcdComInfoEndpoint.class,
-				"/info.{version}.json");
+				XkcdComInfoEndpointDefiniton.class,
+				XkcdComInfoEndpointDefiniton.INFO_PATH);
 		
 		// doing everything manual
 		Invocation invocation = webTarget
