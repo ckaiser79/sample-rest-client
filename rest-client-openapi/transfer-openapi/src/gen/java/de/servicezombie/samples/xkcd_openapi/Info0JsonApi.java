@@ -15,7 +15,7 @@ import javax.validation.Valid;
 
 @Path("/info.0.json")
 @Api(description = "the info.0.json API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2020-11-09T08:28:15.031970700+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2020-11-11T10:44:03.948363+01:00[Europe/Berlin]")
 public interface Info0JsonApi {
 
     @GET

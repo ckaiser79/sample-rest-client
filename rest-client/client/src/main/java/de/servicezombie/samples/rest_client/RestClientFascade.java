@@ -1,5 +1,6 @@
 package de.servicezombie.samples.rest_client;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -12,6 +13,8 @@ import de.servicezombie.samples.xkcd_transfer.XkcdComInfoEndpoint;
 public class RestClientFascade {
 
 	private static final String SLASH = "/";
+	private final static Map<Class<?>, Object> PROXY_CLIENT_CACHE = new HashMap<>();
+
 	private final InstanceCreationStrategy instanceCreationStrategy;
 	private final ClientConfiguration clientConfiguration;
 
@@ -32,8 +35,36 @@ public class RestClientFascade {
 	 * find strategy using System.getProperty Parameters, as Log4J or JNDI does
 	 */
 	public RestClientFascade() {
-		this.clientConfiguration = null;
-		this.instanceCreationStrategy = null;
+
+		final String configurationClass = System.getProperty("rest.default.configurationClass");
+		final String creationStrategy = System.getProperty("rest.default.creationStrategy");
+
+		try {
+
+			if (creationStrategy == null) {
+				instanceCreationStrategy = new RestEasyJaxRsCreationStrategy();
+			} else {
+				instanceCreationStrategy = newInstance(creationStrategy);
+			}
+
+			if (configurationClass == null) {
+				clientConfiguration = new RestEasyJaxRsCreationStrategy();
+			} else {
+				clientConfiguration = newInstance(configurationClass);
+			}
+
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException | SecurityException
+				| ClassNotFoundException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> T newInstance(final String type) throws InstantiationException,
+			IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
+		final Class<?> forName = Class.forName(type);
+		return (T) forName.getDeclaredConstructor().newInstance();
 	}
 
 	public static Map<String, Object> toMap(Object... mapKeyValuePairs) {
@@ -55,8 +86,14 @@ public class RestClientFascade {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> T createClient(Class<? extends T> proxyType) {
-		return instanceCreationStrategy.createClient(proxyType);
+		if (PROXY_CLIENT_CACHE.containsKey(proxyType))
+			return (T) PROXY_CLIENT_CACHE.get(proxyType);
+
+		T client = instanceCreationStrategy.createClient(proxyType);
+		PROXY_CLIENT_CACHE.put(proxyType, client);
+		return client;
 	}
 
 	public URI createURI(
@@ -71,7 +108,7 @@ public class RestClientFascade {
 			final String pathWithParameter,
 			final Map<String, Object> namedParameter) throws URISyntaxException {
 
-		final String endpointPrefix = clientConfiguration.load("endpoint");
+		String endpointPrefix = clientConfiguration.load("endpoint", proxyType);
 
 		// add missing / to avoid bugs
 		final String spacer;
@@ -81,7 +118,7 @@ public class RestClientFascade {
 			spacer = "";
 		else
 			spacer = SLASH;
-
+		
 		final UriBuilder builder = UriBuilder.fromUri(endpointPrefix + spacer + pathWithParameter);
 		final URI result;
 
@@ -91,10 +128,15 @@ public class RestClientFascade {
 			result = builder.buildFromMap(namedParameter);
 		}
 
-		if(result.toString().matches("\\{[a-zA-Z0-9_]\\}")) {
-			throw new IllegalArgumentException("uri contains unmatched parameters: " + result); 
+		if (result.toString().matches("\\{[a-zA-Z0-9_]\\}")) {
+			throw new IllegalArgumentException("uri contains unmatched parameters: " + result);
 		}
-		
+
 		return result;
+	}
+
+	// for testing
+	static void clearCachedProxies() {
+		PROXY_CLIENT_CACHE.clear();
 	}
 }

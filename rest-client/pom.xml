@@ -46,6 +46,12 @@
 				<scope>provided</scope>
 				<version>2.0</version>
 			</dependency>
+			<dependency>
+				<groupId>javax.xml</groupId>
+				<artifactId>jaxb-api</artifactId>
+				<scope>provided</scope>
+				<version>2.1</version>
+			</dependency>
 
 		</dependencies>
 	</dependencyManagement>
@@ -108,6 +114,6 @@
 		<module>client</module>
 
 		<!-- to check if annotations in classes lead to Classpath Errors -->
-		<module>client-plain</module> 
+		<module>client-plain</module>
 	</modules>
 </project>
