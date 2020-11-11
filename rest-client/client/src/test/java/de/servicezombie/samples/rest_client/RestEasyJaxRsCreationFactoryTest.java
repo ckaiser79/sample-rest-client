@@ -2,11 +2,8 @@ package de.servicezombie.samples.rest_client;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,26 +11,26 @@ import org.junit.Test;
 import de.servicezombie.samples.xkcd_transfer.XkcdComInfoEndpoint;
 import de.servicezombie.samples.xkcd_transfer.XkcdComicInfo;
 
-public class RestEasyJaxRsCreationStrategyTest {
+public class RestEasyJaxRsCreationFactoryTest {
 
-	private RestEasyJaxRsCreationStrategy testee;
-	private Properties configuration;
+	private RestEasyJaxRsCreationFactory testee;
+	private SimpleClientConfiguration<XkcdComInfoEndpoint> configuration;
 	
 	@Before
 	public void configure() throws FileNotFoundException, IOException {
 				
-		configuration = new Properties();
-		configuration.load(new FileReader(new File("src/main/resources/endpoints.properties")));
+		configuration = new SimpleClientConfiguration<>(XkcdComInfoEndpoint.class);
+		configuration.putData("endpoint", "http://xkcd.com");
 		
 		// this way it is called by clients in the application, no mandatory ctor parameters are 
 		// allowed
-		testee = new RestEasyJaxRsCreationStrategy();
+		testee = new RestEasyJaxRsCreationFactory();
 		
 	}
 	
 	@Test
 	public void testCreateInstance() {		
-		final XkcdComInfoEndpoint client = testee.createClient(XkcdComInfoEndpoint.class);
+		final XkcdComInfoEndpoint client = testee.createJaxRsClient(configuration);
 		assertNotNull(client);		
 	}
 	
@@ -44,7 +41,7 @@ public class RestEasyJaxRsCreationStrategyTest {
 	@Test
 	public void testInvoke() {
 		
-		final XkcdComInfoEndpoint client = testee.createClient(XkcdComInfoEndpoint.class);
+		final XkcdComInfoEndpoint client = testee.createJaxRsClient(configuration);
 		XkcdComicInfo info = client.info();
 		assertNotNull(info.getSafe_title());
 	}

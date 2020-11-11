@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2020-11-11T10:44:03.948363+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2020-11-11T22:13:25.535093800+01:00[Europe/Berlin]")
 public class XkcdComicInfo   {
   
   private @Valid Integer day;
